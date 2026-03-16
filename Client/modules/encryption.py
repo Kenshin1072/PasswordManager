@@ -134,7 +134,7 @@ class HybridManager:
 
         # Create the JSON package for HTTP
         package = {
-            "session_key_hex": encrypted_session_key,
+            "session_key": encrypted_session_key,
             "payload": combined_payload,
         }
         return package
@@ -147,6 +147,6 @@ class HybridManager:
 
         # Uses the key to open the AES data
         session_aes = AESSystem(key_hex=session_key_hex)
-        original_data = session_aes.aes_decryption(package["payload"])
+        original_data = session_aes.aes_decryption_with_embedded_iv(package["payload"])
 
         return original_data

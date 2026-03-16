@@ -10,6 +10,11 @@ from Client.modules.encryption import AESSystem, HybridManager
 
 from Client.ui.add_password_screen import AddPasswordDialog
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+SERVER_URL = os.getenv("SERVER_HOST", "https://127.0.0.1:8000")
 
 class MainWindow(QMainWindow):
     def __init__(self, user_id, master_key):
@@ -60,7 +65,7 @@ class MainWindow(QMainWindow):
     @staticmethod
     def fetch_server_key():
         try:
-            resp = requests.get("http://localhost:8000/public-key")
+            resp = requests.get(f"{SERVER_URL}/public-key")
             if resp.status_code == 200:
                 data = resp.json()
                 if "public_key" in data:
@@ -105,7 +110,7 @@ class MainWindow(QMainWindow):
             }
 
             package = self.hybrid_manager.prepare_for_middleware(data_str=json.dumps(payload), server_public_key=self.server_public_key)
-            response = requests.post("http://localhost:8000/sync", json=package)
+            response = requests.post(f"{SERVER_URL}/sync", json=package)
 
             if response.status_code == 200:
                 QMessageBox.information(self, "Success", f"Password for: {service} sent.")
@@ -146,7 +151,7 @@ class MainWindow(QMainWindow):
         try:
             categories = []
 
-            url = f"http://localhost:8000/get-categories/{self.user_id}"
+            url = f"{SERVER_URL}/get-categories/{self.user_id}"
             response = requests.get(url)
 
             if response.status_code == 200:
@@ -169,7 +174,7 @@ class MainWindow(QMainWindow):
 
     def load_passwords_from_db(self):
         try:
-            url = f"http://localhost:8000/get-passwords/{self.user_id}/{self.current_folder_id}"
+            url = f"{SERVER_URL}/get-passwords/{self.user_id}/{self.current_folder_id}"
             response = requests.get(url)
 
             if response.status_code == 200:

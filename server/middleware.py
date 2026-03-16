@@ -1,13 +1,13 @@
+import os
 from collections import defaultdict
 import uvicorn
 from fastapi import FastAPI, Request, Response, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 import time
 import json
-from Client.modules.encryption import RSASystem, AESSystem
+from Client.modules.encryption import AESSystem, RSASystem
 from server.database import DBSystem
 from typing import Dict
-from starlette.websockets import WebSocket
 from contextlib import asynccontextmanager
 
 # API logic
@@ -54,7 +54,6 @@ class Middleware(BaseHTTPMiddleware):
             current_time = time.time()
             last_request_time = self.rate_limit_records.get(client_ip, 0)
 
-        # Defining the limit to be 1 request pe second
             if current_time - last_request_time < 0.1:
                 return Response(content=json.dumps({"error": "Rate limit reached"}), status_code=429, media_type="application/json")
 
@@ -63,8 +62,8 @@ class Middleware(BaseHTTPMiddleware):
 
         response = await call_next(request)
 
-        #process_time = time.time() - start_time
-        #response.headers["X-Process-Time"] = str(process_time)
+        process_time = time.time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
         return response
 
 app.add_middleware(Middleware)
@@ -91,7 +90,7 @@ async def rcv_data(request: Request):
         data = await request.json()
 
         decrypted_data = middleware_logic.decrypt_package(
-            data["session_key_hex"], data["payload"])
+            data["session_key"], data["payload"])
 
         # Transform into a dict
         credential = json.loads(decrypted_data)
@@ -115,17 +114,9 @@ async def rcv_data(request: Request):
         print(f"Error when receiving data, error; {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await websocket.send_text(f"Message received: {data}")
-    except Exception as e:
-        print(f"Connection closed, error: {e}")
-        return False
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000)
+    host = os.getenv("API_HOST", "localhost")
+    port = int(os.getenv("API_PORT", 8000))
+    uvicorn.run(app, host=host, port=port)
