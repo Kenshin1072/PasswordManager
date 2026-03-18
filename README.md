@@ -5,7 +5,7 @@ This project is made using pure Python and utilizes hybrd encryption for safety 
 * **GUI:** PySide6 (Qt for Python)
 * **Backend:** FastAPI (Asynchronous Middleware)
 * **Database:** MySQL
-* **Communication:** HTTP Requests & WebSockets
+* **Communication:** HTTP Requests
 * **Security:** Cryptography (AES-256 GCM, RSA-4096, SHA3-512, PBKDF2)
 
 ## Architecture explanation
@@ -28,25 +28,24 @@ cd PasswordManager
 ### 2. Create the virtual environment
 ``` bash
 python -m venv .venv
+.venv\Scripts\activate
 ``` 
 ### 3. Install the requirements for the code
 ```  bash
 pip install -r requirements.txt
 ``` 
-### 4. Create an archive named .env and put your credentials from MySQL
+### 4. Create an archive named .env and put your credentials 
 ``` bash
-DB_HOST=localhost
-DB_USER=seu_usuario
-DB_PASSWORD=sua_senha
-DB_NAME=password_manager
+cp .env.example .env
+# Open .env and edit DB_USER, DB_PASSWORD, etc.
 ``` 
 ### 5. Execute the middleware for the program to create the tables
 ``` bash
-python server/middleware.py
+python -m Server.middleware
 ``` 
 ### 6. Open the client
 ``` bash
-python client/main.py
+python -m Client.main
 ``` 
 
 ## Libraries
@@ -54,8 +53,8 @@ python client/main.py
 - **cryptography**: This library is a gold standard for Python. It handles AES-256 and RSA.
 - **hashlib**: It comes built-in with Python and has SHA3-512 for the Master Key storage.
 ### Communication & Backend
-- **FastAPI &  uvicorn**: These are used in place of the RestAPI because are for Python and are extremely modern and fast, making it easy for the Middleware.
+- **FastAPI &  Uvicorn**: A modern, high-performance web framework for building the REST API.
 - **requests & httpx**: Are messengers required for the client and http.
-- **websockets**: This was prefered for to facilitate the connection in real time and for study purpose.
+- **Python-Decouple/Dotenv**: To manage environment variables safely.
 ### GUI
 - **PySide**: This is a modern GUI interface for Python and was chosen because of indication.
