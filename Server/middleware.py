@@ -6,7 +6,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 import time
 import json
 from Client.modules.encryption import AESSystem, RSASystem
-from server.database import DBSystem
+from Server.database import DBSystem
 from typing import Dict
 from contextlib import asynccontextmanager
 
