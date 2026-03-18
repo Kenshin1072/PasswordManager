@@ -6,12 +6,12 @@ This project is made using pure Python and utilizes hybrd encryption for safety 
 * **Backend:** FastAPI (Asynchronous Middleware)
 * **Database:** MySQL
 * **Communication:** HTTP Requests
-* **Security:** Cryptography (AES-256 GCM, RSA-4096, SHA3-512, PBKDF2)
+* **Security:** Cryptography (AES-256 GCM, RSA-4096, SHA512, PBKDF2)
 
 ## Architecture explanation
 - **Middleware API:** A FastAPI server acts as a bridge between the Client and the Database. The Client never communicates directly with MySQL.
 - **Autonomous Database:** The system automatically creates the MySQL database and the required tables upon the first run of the middleware.
-- **User Authentication:** Master keys are stored using **SHA3-512** with a unique salt per user.
+- **User Authentication:** Master keys are stored using **SHA512** with a unique salt per user.
 - **Key Derivation:** The AES-256 key used for local encryption is derived from the Master Key using **PBKDF2-HMAC-SHA512** (100k iterations).
 - **Hybrid Cryptography:** All data transport between Client and Middleware is protected by a hybrid system:
     1. Data is encrypted with a random **Session AES Key**.
